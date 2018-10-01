@@ -77,6 +77,7 @@ public class Node extends Thread implements Constants {
 					}
 
 				}
+				break;
 				//System.err.println("Reiniciando o processo...");
 			}
 		} catch (Exception e) {
