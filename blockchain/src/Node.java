@@ -61,13 +61,13 @@ public class Node extends Thread implements Constants {
 					// bloco minerado por outro no...
 					if (blocoMinerado == null) {
 						
-						System.out.print("Bloco recebido de outro no - ");
+						System.out.println("Bloco recebido de outro no");
 						
 						// reativa a mineradora
 						mineradora.getMinerar().set(true);
 					}
 					else { // bloco minerado por esse no
-						System.err.print("Bloco minerado com sucesso por este no - ");
+						System.err.println("Bloco minerado com sucesso por este no");
 
 						// envia o bloco para os outros nos da rede (broadcast)
 						redeUDP.broadcast(blocoMinerado);
