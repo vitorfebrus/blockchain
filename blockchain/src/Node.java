@@ -67,7 +67,7 @@ public class Node extends Thread implements Constants {
 						mineradora.getMinerar().set(true);
 					}
 					else { // bloco minerado por esse no
-						System.err.println("Bloco " + blocoMinerado.getId() + " minerado com sucesso por este no!");
+						System.err.println("Bloco " + blocoMinerado.getId() + " minerado com sucesso por este no! " + blocoMinerado);
 
 						// envia o bloco para os outros nos da rede (broadcast)
 						redeUDP.broadcast(blocoMinerado);

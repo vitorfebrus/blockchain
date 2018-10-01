@@ -40,7 +40,6 @@ public class Blockchain implements Constants {
 		// bloco invalido
 		else {
 			System.out.println("Block invalido nao adicionado!");
-			System.out.println(blocoNovo);
 			// notificar a rede sobre um no suspeito
 			// pedir o reenvio do block
 			return false;
