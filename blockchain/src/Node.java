@@ -1,4 +1,3 @@
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +16,7 @@ public class Node extends Thread implements Constants {
 	private Blockchain blockchain;
 
 	// forneca funcionalidades basicas de comunicacao
-	private NetworkUDP rede;
+	private NetworkUDP redeUDP;
 
 	// forneca funcionalidades basicas de comunicacao
 	private NetworkTCP redeTCP;
@@ -31,7 +30,7 @@ public class Node extends Thread implements Constants {
 		Block genesisBlock = new Block();
 		genesisBlock.setTimeStamp(0);
 		blockchain = new Blockchain(genesisBlock);
-		rede = new NetworkUDP(this);
+		redeUDP = new NetworkUDP(this);
 		redeTCP = new NetworkTCP(this);
 	}
 
@@ -49,28 +48,30 @@ public class Node extends Thread implements Constants {
 
 				// caso tenham n o mais transacoes para serem mineradas...
 				if (transacoesNaoConfirmadas.size() >= QUANT_TRANSACAO_BLOCO) {
+					
 					// cria um bloco com n transacoes nao confirmadas
 					Block bloco = new Block();
 					fillBlock(bloco);
 					
-					// minera o bloco, ou para se receber o bloco minerado por outro no
+					// minera o bloco, ou para se receber o bloco minerado por outro no.
 					// a condicao de parada esta implementada na propria mineradora
 					
 					Block blocoMinerado = mineradora.minerarBloco(bloco);
 
 					// bloco minerado por outro no...
 					if (blocoMinerado == null) {
+						
+						System.out.print("Bloco recebido de outro no - ");
+						
 						// reativa a mineradora
 						mineradora.getMinerar().set(true);
-						
-						System.out.println("Bloco recebido de outro no");
 					}
 					else { // bloco minerado por esse no
-						System.err.println("Bloco minerado com sucesso por este no");
+						System.err.print("Bloco minerado com sucesso por este no - ");
 
 						// envia o bloco para os outros nos da rede (broadcast)
-						redeTCP.send(blocoMinerado, "10.0.39.18");
-
+						redeUDP.broadcast(blocoMinerado);
+						
 						// adiciona o bloco na blockchain
 						blockchain.add(blocoMinerado);
 					}
@@ -130,11 +131,11 @@ public class Node extends Thread implements Constants {
 	}
 
 	public NetworkUDP getRede() {
-		return rede;
+		return redeUDP;
 	}
 
 	public void setRede(NetworkUDP rede) {
-		this.rede = rede;
+		this.redeUDP = rede;
 	}
 
 	public Mineradora getMineradora() {
