@@ -34,7 +34,7 @@ public class Blockchain implements Constants {
 			blocoNovo.setBlocoAnterior(blocoAtual);
 			blocoAtual = blocoNovo;
 			
-			System.out.println("Block adicionado com sucesso!");
+			System.out.println("Bloco adicionado com sucesso! " + blocoNovo.getId());
 			return true;
 		}
 		// bloco invalido
