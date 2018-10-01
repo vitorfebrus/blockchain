@@ -6,7 +6,7 @@ public interface Constants {
 	static final int PORT = 8545;
 	
 	// constante de dificuldade de mineracao dos blocos
-	static final int DIFICULDADE = 6;
+	static final int DIFICULDADE = 5;
 
 	// quantidade de trasacoes por bloco
 	static final int QUANT_TRANSACAO_BLOCO = 1;
