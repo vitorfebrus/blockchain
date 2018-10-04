@@ -5,8 +5,6 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 // classe responsavel por fornecer comunicacao pela rede
 public class NetworkUDP implements Constants {
@@ -14,10 +12,7 @@ public class NetworkUDP implements Constants {
 	private DatagramSocket socketUDP;
 
 	private ByteArrayOutputStream btOutput;
-	private ByteArrayInputStream btInput;
-
 	private ObjectOutputStream objOutput;
-	private ObjectInputStream objInput;
 
 	private Receiver input;
 
@@ -109,7 +104,8 @@ public class NetworkUDP implements Constants {
 			byte[] buffer = btOutput.toByteArray();
 
 			// cria o pacote que sera enviado
-			DatagramPacket pacote = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(BROADCAST_ADDR), PORT);
+			DatagramPacket pacote = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(BROADCAST_ADDR),
+					PORT);
 
 			// envia o pacote
 			socketUDP.send(pacote);
@@ -146,9 +142,6 @@ public class NetworkUDP implements Constants {
 // thread resposavel por receber as conexoes a passar para outra classe
 // trata-las
 class ReceiverUDP extends Thread implements Constants {
-
-	// socket servidor
-	private ServerSocket servidor;
 
 	private DatagramSocket receptor;
 
@@ -216,39 +209,10 @@ class ConectionManagerUDP extends Thread {
 
 			Object objetoRecebio = objInput.readObject();
 
-			tratarApdu(objetoRecebio);
+			no.tratarApdu(objetoRecebio);
 
 			objInput.close();
 			btInput.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public void tratarApdu(Object apdu) {
-
-		try {
-
-			// caso a apdu recebida tenha uma transacao...
-			if (apdu instanceof Transacao) {
-				// adiciona a transacao recebida na lista de transacoes nao confirmadas
-				no.addTransacao((Transacao) apdu);
-			}
-			// caso a apdu recebida tenha um bloco...
-			else if (apdu instanceof Block) {
-
-				// trata o bloco de acordo com o id dele
-				tratarBloco((Block) apdu);
-
-			}
-			// caso a apdu recebida seja uma requisicao da blockchain...
-			else if (apdu instanceof BlockchainRequest) {
-				// envia toda a blockchain para o ip que a solcitou
-				Blockchain blockchain = no.getBlockchain();
-				no.getRede().send(blockchain, "");
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -263,17 +227,17 @@ class ConectionManagerUDP extends Thread {
 		Block atual = no.getBlockchain().getBlocoAtual();
 		int idAtual = atual.getId();
 
-		// caso este no ainda nao tenha esse bloco
+		// caso este no ainda nao tenha este bloco
 		if (idAtual < bloco.getId()) {
 
 			// caso seja o proximo bloco
 			if (bloco.getId() == idAtual + 1) {
 				if (no.getBlockchain().add(bloco)) { // adiciona o bloco na blockchain
 					no.getMineradora().getMinerar().set(false);
-					; // se a adicao for um sucesso, indica para a mineradora que
-						// este bloco ja foi minerado
-						// remove todas as transacoes que ja foram mineradas por outro no
-						// da lista de transacoes nao confirmadas
+					// se a adicao for um sucesso, indica para a mineradora que
+					// este bloco ja foi minerado
+					// remove todas as transacoes que ja foram mineradas por outro no
+					// da lista de transacoes nao confirmadas
 					no.getTransacoesNaoConfirmadas().removeAll(bloco.getTransacoes());
 				}
 			} else {
@@ -288,4 +252,5 @@ class ConectionManagerUDP extends Thread {
 			// guarda o bloco
 		}
 	}
+
 }

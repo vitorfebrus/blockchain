@@ -47,6 +47,12 @@ public class Blockchain implements Constants {
 		
 	}
 	
+	public void removerMaisRecente() {
+		
+		blocoAtual = blocoAtual.getBlocoAnterior();
+		
+	}
+	
 	// cria uma string com a quantidade de 0 referente a dificuldade
 	public String condicao() {
 		String condicao = "";
@@ -62,16 +68,8 @@ public class Blockchain implements Constants {
 		return genesisBlock;
 	}
 
-	public void setGenesisBlock(Block genesisBlock) {
-		this.genesisBlock = genesisBlock;
-	}
-
 	public Block getBlocoAtual() {
 		return blocoAtual;
-	}
-
-	public void setBlocoAtual(Block blocoAtual) {
-		this.blocoAtual = blocoAtual;
 	}
 
 }
