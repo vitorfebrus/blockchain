@@ -20,8 +20,7 @@ public class Blockchain implements Constants {
 		
 		// 1 - verificar se o hash do bloco recebido esta calculado corretamente
 		boolean dificuldadeSatisfeita = blocoNovo.hash().substring(0, DIFICULDADE).equals(condicao());
-		
-		
+				
 		// 2 - verificar se o hash do bloco anterior esta correto
 		boolean hashBlocoAnteriorSatisfeito = blocoAtual.hash().equals(blocoNovo.getHashBlockAnterior());
 		

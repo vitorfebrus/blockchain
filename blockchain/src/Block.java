@@ -84,7 +84,9 @@ public class Block implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Block [" + "hashBlockAnterior=" + hashBlockAnterior + ", nonce=" + nonce
-				+ ", timeStamp=" + timeStamp + "]";
+		return "Block [id=" + id + ", transacoes=" + transacoes + ", hashBlockAnterior=" + hashBlockAnterior
+				+ ", nonce=" + nonce + "]";
 	}
+
+	
 }

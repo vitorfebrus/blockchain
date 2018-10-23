@@ -19,7 +19,7 @@ public class Node extends Thread implements Constants {
 	private HashMap<String, Block> backupBlocos;
 
 	// forneca funcionalidades basicas de comunicacao
-	private NetworkUDP redeUDP;
+	private NetworkTCP redeTCP;
 
 	public Node() {
 		mineradora = new Mineradora();
@@ -29,7 +29,7 @@ public class Node extends Thread implements Constants {
 		Block genesisBlock = new Block();
 		genesisBlock.setTimeStamp(0);
 		blockchain = new Blockchain(genesisBlock);
-		redeUDP = new NetworkUDP(this);
+		redeTCP = new NetworkTCP(this);
 
 		backupBlocos = new HashMap<>();
 	}
@@ -44,7 +44,7 @@ public class Node extends Thread implements Constants {
 			while (true) {
 
 				// cria uma transacao de teste
-				addTransacao(new Transacao(String.valueOf(cod)));
+				addTransacao(new Transacao(String.valueOf("Transcao numero: " + cod)));
 
 				// caso tenham n ou mais transacoes para serem mineradas...
 				if (transacoesNaoConfirmadas.size() >= QUANT_TRANSACAO_BLOCO) {
@@ -70,10 +70,12 @@ public class Node extends Thread implements Constants {
 								+ blocoMinerado);
 
 						// envia o bloco para os outros nos da rede (broadcast)
-						redeUDP.broadcast(blocoMinerado);
+						redeTCP.send(blocoMinerado, "10.0.0.114");
 
 						// adiciona o bloco na blockchain
 						blockchain.add(blocoMinerado);
+						
+						Thread.sleep(5000);
 					}
 
 				}
@@ -134,7 +136,7 @@ public class Node extends Thread implements Constants {
 			// caso a apdu recebida seja uma requisicao da blockchain...
 			else if (apdu instanceof BlockchainRequest) {
 				// envia toda a blockchain para o ip que a solcitou
-				redeUDP.send(blockchain, "");
+				redeTCP.send(blockchain, "");
 			}
 
 		} catch (Exception e) {
@@ -143,7 +145,7 @@ public class Node extends Thread implements Constants {
 
 	}
 
-	private void tratarBloco(Block blocoRecebido) {
+	public void tratarBloco(Block blocoRecebido) {
 
 		// pega o id do bloco mais recente da blochain
 		int idAtual = blockchain.getBlocoAtual().getId();
@@ -173,10 +175,8 @@ public class Node extends Thread implements Constants {
 					blockchain.add(anterior);
 					
 					// seta o blocoRecebido como o mais recente
-					blockchain.add(blocoRecebido);
-					
+					blockchain.add(blocoRecebido);	
 				}
-				
 			}
 
 		}
@@ -204,12 +204,12 @@ public class Node extends Thread implements Constants {
 		this.blockchain = blockchain;
 	}
 
-	public NetworkUDP getRede() {
-		return redeUDP;
+	public NetworkTCP getRede() {
+		return redeTCP;
 	}
 
-	public void setRede(NetworkUDP rede) {
-		this.redeUDP = rede;
+	public void setRede(NetworkTCP rede) {
+		this.redeTCP = rede;
 	}
 
 	public Mineradora getMineradora() {

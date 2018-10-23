@@ -14,19 +14,19 @@ public class NetworkUDP implements Constants {
 	private ByteArrayOutputStream btOutput;
 	private ObjectOutputStream objOutput;
 
-	private Receiver input;
+	private ReceiverUDP input;
 
 	// cria um relacionamento bidirecional entre o no e a network
 	private Node no;
 
 	public NetworkUDP() {
-		input = new Receiver(no);
+		input = new ReceiverUDP(no);
 		input.start();
 	}
 
 	public NetworkUDP(Node no) {
 		this.no = no;
-		input = new Receiver(no);
+		input = new ReceiverUDP(no);
 		input.start();
 	}
 
@@ -129,14 +129,6 @@ public class NetworkUDP implements Constants {
 		this.no = no;
 	}
 
-	public Receiver getInput() {
-		return input;
-	}
-
-	public void setInput(Receiver input) {
-		this.input = input;
-	}
-
 }
 
 // thread resposavel por receber as conexoes a passar para outra classe
@@ -218,39 +210,6 @@ class ConectionManagerUDP extends Thread {
 			e.printStackTrace();
 		}
 
-	}
-
-	public void tratarBloco(Block bloco) {
-
-		// pega o id do bloco mais recente da blochain
-
-		Block atual = no.getBlockchain().getBlocoAtual();
-		int idAtual = atual.getId();
-
-		// caso este no ainda nao tenha este bloco
-		if (idAtual < bloco.getId()) {
-
-			// caso seja o proximo bloco
-			if (bloco.getId() == idAtual + 1) {
-				if (no.getBlockchain().add(bloco)) { // adiciona o bloco na blockchain
-					no.getMineradora().getMinerar().set(false);
-					// se a adicao for um sucesso, indica para a mineradora que
-					// este bloco ja foi minerado
-					// remove todas as transacoes que ja foram mineradas por outro no
-					// da lista de transacoes nao confirmadas
-					no.getTransacoesNaoConfirmadas().removeAll(bloco.getTransacoes());
-				}
-			} else {
-				// muito improvavel em rede local com geracao de blocos a cada 1 minuto
-				// blockchain muito antiga...
-				// guarda o bloco e espera por novos blocos pra completar o gap
-			}
-		}
-		// caso este bloco tenha o mesmo id do bloco atual (blocos minerados
-		// "simultaneamente")
-		else if (idAtual == bloco.getId()) {
-			// guarda o bloco
-		}
 	}
 
 }
