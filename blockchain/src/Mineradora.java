@@ -25,7 +25,7 @@ public class Mineradora implements Constants {
 			bloco.setNonce(bloco.getNonce() + 1);
 
 			blockHash = DigestUtils.sha256Hex(bloco.toString());
-			System.out.println(bloco.getNonce() + " " + blockHash);
+			//System.out.println(bloco.getNonce() + " " + blockHash);
 			inicioHash = blockHash.substring(0, DIFICULDADE);
 
 		} while (!inicioHash.equals(condicao()) && minerar.get());
