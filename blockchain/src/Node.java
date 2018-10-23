@@ -70,7 +70,7 @@ public class Node extends Thread implements Constants {
 								+ blocoMinerado);
 
 						// envia o bloco para os outros nos da rede (broadcast)
-						redeTCP.send(blocoMinerado, "10.0.0.114");
+						redeTCP.send(blocoMinerado, "10.0.0.");
 
 						// adiciona o bloco na blockchain
 						blockchain.add(blocoMinerado);
